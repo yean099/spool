@@ -1,0 +1,35 @@
+{
+  "version": "datos-v1",
+  "pedidos": [
+    {
+      "id": "PED-001",
+      "zona": "Norte",
+      "estado": "En ruta"
+    },
+    {
+      "id": "PED-002",
+      "zona": "Centro",
+      "estado": "Entregado"
+    },
+    {
+      "id": "PED-003",
+      "zona": "Sur",
+      "estado": "Pendiente"
+    },
+    {
+      "id": "PED-004",
+      "zona": "Occidente",
+      "estado": "En ruta"
+    },
+    {
+      "id": "PED-005",
+      "zona": "Oriente",
+      "estado": "Entregado"
+    },
+    {
+      "id": "PED-006",
+      "zona": "Centro",
+      "estado": "En preparación"
+    }
+  ]
+}
