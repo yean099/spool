@@ -1,0 +1,104 @@
+{
+  "url": "http://127.0.0.1:8080/pedidos",
+  "fecha_utc": "2026-11-21T15:14:12.060080+00:00",
+  "usuarios": 10,
+  "segundos": 20.06,
+  "pausa": 0.0,
+  "total_peticiones": 6143,
+  "exitosas": 6143,
+  "tasa_error_%": 0.0,
+  "errores": {},
+  "peticiones_por_segundo": 306.3,
+  "latencia_ms": {
+    "media": 32.5,
+    "p50": 27.67,
+    "p95": 52.62,
+    "p99": 69.78,
+    "max": 1213.3
+  },
+  "reparto_por_instancia": {
+    "app1": 6143
+  },
+  "serie_por_segundo": {
+    "0": {
+      "ok": 20,
+      "error": 0
+    },
+    "1": {
+      "ok": 329,
+      "error": 0
+    },
+    "2": {
+      "ok": 371,
+      "error": 0
+    },
+    "3": {
+      "ok": 335,
+      "error": 0
+    },
+    "4": {
+      "ok": 362,
+      "error": 0
+    },
+    "5": {
+      "ok": 364,
+      "error": 0
+    },
+    "6": {
+      "ok": 357,
+      "error": 0
+    },
+    "7": {
+      "ok": 320,
+      "error": 0
+    },
+    "8": {
+      "ok": 199,
+      "error": 0
+    },
+    "9": {
+      "ok": 251,
+      "error": 0
+    },
+    "10": {
+      "ok": 346,
+      "error": 0
+    },
+    "11": {
+      "ok": 354,
+      "error": 0
+    },
+    "12": {
+      "ok": 345,
+      "error": 0
+    },
+    "13": {
+      "ok": 342,
+      "error": 0
+    },
+    "14": {
+      "ok": 256,
+      "error": 0
+    },
+    "15": {
+      "ok": 310,
+      "error": 0
+    },
+    "16": {
+      "ok": 330,
+      "error": 0
+    },
+    "17": {
+      "ok": 326,
+      "error": 0
+    },
+    "18": {
+      "ok": 314,
+      "error": 0
+    },
+    "19": {
+      "ok": 312,
+      "error": 0
+    }
+  }
+}

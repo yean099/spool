@@ -1,0 +1,18 @@
+VALIDACIÓN DE LA POLÍTICA DE REINICIO
+Fecha UTC: 2026-11-21T15:58:28Z | rama: feature003 | commit: 270a42b
+
+PRUEBA 1 - Parada manual: docker compose kill app1 (método del paso 4 de la guía)
+   estado: exited (exit 137) | restart=unless-stopped | RestartCount=0
+   GET /health -> HTTP 200
+
+PRUEBA 2 - Caída real del proceso de app1 (kill -9 al PID desde el host de Docker)
+   estado: running (exit 0) | restart=unless-stopped | RestartCount=1
+   GET /health -> HTTP 200
+
+PRUEBA 3a - Caída real del proxy ANTES de la corrección (compose de 515c32f, proxy sin restart)
+   estado: exited (exit 137) | restart=no | RestartCount=0
+   GET /health -> HTTP 000
+
+PRUEBA 3b - Caída real del proxy DESPUÉS de la corrección (commit 270a42b)
+   estado: running (exit 0) | restart=unless-stopped | RestartCount=1
+   GET /health -> HTTP 200
