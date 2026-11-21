@@ -4,6 +4,7 @@ services:
   app1:
     build:
       context: ..
+    restart: unless-stopped
     environment:
       INSTANCE_ID: app1
       DATA_PATH: /data/pedidos.json
@@ -23,6 +24,7 @@ services:
   app2:
     build:
       context: ..
+    restart: unless-stopped
     environment:
       INSTANCE_ID: app2
       DATA_PATH: /data/pedidos.json
