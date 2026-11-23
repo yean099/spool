@@ -1,0 +1,70 @@
+# Nodo Ruta — stack completo: backend (x2) + frontend + proxy
+name: nodo-ruta-lab
+
+services:
+  # ── Backend instancia 1 ──────────────────────────────────────────────────
+  app1:
+    build:
+      context: .
+    environment:
+      INSTANCE_ID: app1
+      DATA_PATH: /data/pedidos.json
+    volumes:
+      - type: bind
+        source: ./data/pedidos.json
+        target: /data/pedidos.json
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # ── Backend instancia 2 ──────────────────────────────────────────────────
+  app2:
+    build:
+      context: .
+    environment:
+      INSTANCE_ID: app2
+      DATA_PATH: /data/pedidos.json
+    volumes:
+      - type: bind
+        source: ./data/pedidos.json
+        target: /data/pedidos.json
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # ── Frontend React (build multi-stage) ──────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - proxy
+
+  # ── Proxy NGINX ──────────────────────────────────────────────────────────
+  proxy:
+    image: nginx:1.28-alpine
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+        bind:
+          create_host_path: false
+    depends_on:
+      app1:
+        condition: service_healthy
+      app2:
+        condition: service_healthy
