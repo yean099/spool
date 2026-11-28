@@ -51,7 +51,7 @@ function App() {
 
   useEffect(() => {
     fetchData()
-    const interval = setInterval(fetchData, 10000)
+    const interval = setInterval(fetchData, 3000)
     return () => clearInterval(interval)
   }, [fetchData])
 
@@ -136,7 +136,7 @@ function App() {
 
       <footer className="app-footer">
         <span>Nodo Ruta · Bootcamp DevOps · Caso ficticio EstudIA</span>
-        <span>Auto-refresh cada 10 s</span>
+        <span>Auto-refresh cada 3 s</span>
       </footer>
     </div>
   )

@@ -64,7 +64,7 @@ El contenedor corre con usuario sin privilegios (`USER 10001`). La imagen incluy
 
 ### 2.3 Frontend (`frontend/`)
 
-React + Vite. Consulta `/health` y `/pedidos` al cargar y cada 10 s. `VITE_API_URL` (opcional, en tiempo de build) cambia la base de las llamadas; vacío usa el mismo origen. Componentes: `HealthCard`, `PedidosTable`, `Filters`. En desarrollo (`npm run dev`, puerto 3000) Vite redirige `/health` y `/pedidos` a `http://localhost:8080`.
+React + Vite. Consulta `/health` y `/pedidos` al cargar y cada 3 s. `VITE_API_URL` (opcional, en tiempo de build) cambia la base de las llamadas; vacío usa el mismo origen. Componentes: `HealthCard`, `PedidosTable`, `Filters`. En desarrollo (`npm run dev`, puerto 3000) Vite redirige `/health` y `/pedidos` a `http://localhost:8080`.
 
 ### 2.4 Datos
 

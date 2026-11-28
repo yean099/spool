@@ -37,7 +37,7 @@ Arriba de la tabla hay dos filtros:
 Puedes combinar ambos. Para ver todo otra vez, elige **Todas** y **Todos**.
 
 ### Actualización
-La página se actualiza sola **cada 10 segundos**. No hace falta recargarla. Si quieres datos al instante, pulsa **Actualizar**.
+La página se actualiza sola **cada 3 segundos**. No hace falta recargarla. Si quieres datos al instante, pulsa **Actualizar**.
 
 ### Estados de un pedido
 | Estado | Significado |
