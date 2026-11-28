@@ -64,7 +64,35 @@ El contenedor corre con usuario sin privilegios (`USER 10001`). La imagen incluy
 
 ### 2.3 Frontend (`frontend/`)
 
-React + Vite. Consulta `/health` y `/pedidos` al cargar y cada 3 s. `VITE_API_URL` (opcional, en tiempo de build) cambia la base de las llamadas; vacío usa el mismo origen. Componentes: `HealthCard`, `PedidosTable`, `Filters`. En desarrollo (`npm run dev`, puerto 3000) Vite redirige `/health` y `/pedidos` a `http://localhost:8080`.
+React + Vite. Consulta `/health` y `/pedidos` al cargar y cada 3 s (`setInterval` en `src/App.jsx`). `VITE_API_URL` (opcional, en tiempo de build) cambia la base de las llamadas; vacío usa el mismo origen. En desarrollo (`npm run dev`, puerto 3000) Vite redirige `/health` y `/pedidos` a `http://localhost:8080`.
+
+| Archivo | Función |
+|---|---|
+| `src/App.jsx` | Estado, refresco, filtros e integración del registro manual |
+| `src/components/HealthCard.jsx`, `Filters.jsx`, `PedidosTable.jsx` | Tarjetas de estado, filtros y tabla |
+| `src/components/PedidoForm.jsx` | Formulario de nuevo pedido (ID, zona, estado) |
+| `src/lib/pedidosManuales.js` | Lógica pura: `siguienteId`, `validarPedido`, `cargar`, `guardar`, `filtroValido` |
+| `src/lib/pedidosManuales.test.js` | Pruebas con `node --test` |
+
+**Registro manual de pedidos (demo).** El botón **+ Registrar pedido** guarda en `localStorage`, clave `nodoRuta.pedidosManuales`, objetos `{id, zona, estado, manual: true}`. Es una función solo de frontend:
+
+- No llama al backend: `/pedidos` y `version_datos` no cambian, y otros navegadores no ven esos pedidos.
+- La tabla une los pedidos del servidor con los manuales (etiqueta "manual", botón ✕ para quitar). La clave de fila es `m-<id>` / `s-<id>`, por lo que un ID repetido entre servidor y manual no colisiona.
+- ID sugerido: el siguiente `PED-NNN` libre; los IDs del servidor con otro formato se ignoran. Validación: ID obligatorio y único sin distinguir mayúsculas ni espacios; el formulario lo guarda en mayúsculas.
+- `localStorage` corrupto, con un valor que no es lista, o no disponible: se ignora y la app sigue sin persistir.
+- Si un filtro apunta a una zona o estado que ya no existe, vuelve a "Todas"/"Todos" (`filtroValido`).
+- Limitaciones conocidas: con el servidor sin responder desde el inicio y sin pedidos, no hay zonas ni estados que elegir; dos pestañas abiertas a la vez se pisan al guardar; no se descartan duplicados escritos a mano en el almacenamiento.
+- Para persistirlos en servidor haría falta un endpoint de escritura en `app.py`, quitar el solo lectura del bind mount y controlar la escritura concurrente entre `app1` y `app2`. Diseño y alternativas: `docs/superpowers/specs/2026-11-28-registro-pedido-manual-design.md`.
+
+Pruebas y calidad del frontend:
+
+```bash
+cd frontend
+npm ci
+npm test         # node --test "src/lib/*.test.js" (requiere Node 21+)
+npm run lint
+npm run build
+```
 
 ### 2.4 Datos
 
@@ -196,6 +224,7 @@ Comandos completos en el `README.md`, sección "Pruebas de aceptación".
 |---|---|---|
 | `failed to mount pedidos.json` | Falta `data/pedidos.json` | `python scripts/datos.py preparar` |
 | Puerto 8080 ocupado | Otro proceso lo usa | Cambiar el mapeo en `compose.yaml` |
+| El formulario de pedido no ofrece zonas ni estados | El frontend aún no recibió `/pedidos` | Comprobar `docker compose ps` y `curl /pedidos`; se rellena solo cuando llegan los datos |
 | `/health` → 503 | JSON de datos inválido o ausente | `datos.py restaurar --respaldo …` |
 | Responde solo una instancia | La otra está `unhealthy` | `docker compose logs app1` |
 | Proxy no arranca por host `frontend` | El contenedor `frontend` no existe aún | `docker compose up -d` (crea todos antes de arrancar el proxy) |
@@ -214,6 +243,7 @@ respaldos/                    generado por datos.py respaldar (no versionado)
 ayuda_opcional/               compose y nginx de referencia
 auto_backup.sh / .bat         respaldo programable
 docs/                         este manual y el manual de usuario
+docs/superpowers/             diseño y plan del registro manual de pedidos
 ```
 
 Ejecución local sin Docker: `python scripts/ejecutar_local.py --puerto 8080 --id local-1` (usa `data/pedidos.json`).
