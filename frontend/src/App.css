@@ -91,3 +91,34 @@ body {
   font-size: 0.75rem; padding: 0.1rem 0.5rem;
   border-radius: 999px; font-weight: 700; margin-left: 0.4rem;
 }
+
+/* ── Pedido manual (demo) ── */
+.section-header .btn-refresh { margin-left: auto; }
+.aviso-manual { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+.pedido-form {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem;
+}
+.pedido-form h3 { width: 100%; font-size: 0.9rem; color: var(--accent); }
+.pedido-form label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.75rem; color: var(--text-muted); }
+.pedido-form input, .pedido-form select {
+  background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+}
+.form-error { width: 100%; color: #fca5a5; font-size: 0.8rem; }
+.form-actions { display: flex; gap: 0.5rem; margin-left: auto; }
+.btn-secondary {
+  background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 0.4rem 1rem; cursor: pointer;
+}
+.tag-manual {
+  margin-left: 0.5rem; font-family: inherit; font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; color: var(--accent2); border: 1px solid var(--accent2);
+  border-radius: 999px; padding: 0 0.4rem;
+}
+.btn-quitar {
+  margin-left: 0.75rem; background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 0.85rem;
+}
+.btn-quitar:hover { color: var(--red); }

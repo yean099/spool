@@ -2,9 +2,15 @@ import { useState, useEffect, useCallback } from 'react'
 import HealthCard from './components/HealthCard'
 import PedidosTable from './components/PedidosTable'
 import Filters from './components/Filters'
+import PedidoForm from './components/PedidoForm'
+import { siguienteId, validarPedido, cargar, guardar } from './lib/pedidosManuales'
 import './App.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
+
+const almacenamiento = () => {
+  try { return window.localStorage } catch { return undefined }
+}
 
 function App() {
   const [health, setHealth] = useState(null)
@@ -14,6 +20,13 @@ function App() {
   const [lastUpdate, setLastUpdate] = useState(null)
   const [filtroZona, setFiltroZona] = useState('Todas')
   const [filtroEstado, setFiltroEstado] = useState('Todos')
+  const [manuales, setManuales] = useState(() => cargar(almacenamiento()))
+  const [mostrarForm, setMostrarForm] = useState(false)
+
+  const actualizarManuales = (nueva) => {
+    setManuales(nueva)
+    guardar(almacenamiento(), nueva)
+  }
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -42,14 +55,17 @@ function App() {
     return () => clearInterval(interval)
   }, [fetchData])
 
-  const pedidosFiltrados = pedidos.filter(p => {
+  const todos = [...pedidos, ...manuales]
+  const idsTodos = todos.map(p => p.id)
+
+  const pedidosFiltrados = todos.filter(p => {
     const zonaOk = filtroZona === 'Todas' || p.zona === filtroZona
     const estadoOk = filtroEstado === 'Todos' || p.estado === filtroEstado
     return zonaOk && estadoOk
   })
 
-  const zonas = ['Todas', ...new Set(pedidos.map(p => p.zona))]
-  const estados = ['Todos', ...new Set(pedidos.map(p => p.estado))]
+  const zonas = ['Todas', ...new Set(todos.map(p => p.zona))]
+  const estados = ['Todos', ...new Set(todos.map(p => p.estado))]
 
   return (
     <div className="app">
@@ -94,8 +110,24 @@ function App() {
               onZonaChange={setFiltroZona}
               onEstadoChange={setFiltroEstado}
             />
+            <button className="btn-refresh" onClick={() => setMostrarForm(true)}>+ Registrar pedido</button>
           </div>
-          <PedidosTable pedidos={pedidosFiltrados} loading={loading} />
+          {mostrarForm && (
+            <PedidoForm
+              zonas={zonas.filter(z => z !== 'Todas')}
+              estados={estados.filter(e => e !== 'Todos')}
+              idSugerido={siguienteId(idsTodos)}
+              validar={(p) => validarPedido(p, idsTodos)}
+              onGuardar={(p) => { actualizarManuales([...manuales, { ...p, manual: true }]); setMostrarForm(false) }}
+              onCancelar={() => setMostrarForm(false)}
+            />
+          )}
+          <p className="aviso-manual">Los pedidos manuales se guardan solo en este navegador y no se envían al servidor.</p>
+          <PedidosTable
+            pedidos={pedidosFiltrados}
+            loading={loading}
+            onQuitar={(id) => actualizarManuales(manuales.filter(m => m.id !== id))}
+          />
         </section>
       </main>
 

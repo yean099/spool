@@ -17,7 +17,7 @@ const estadoBadge = (estado) => {
   )
 }
 
-export default function PedidosTable({ pedidos, loading }) {
+export default function PedidosTable({ pedidos, loading, onQuitar }) {
   if (loading && pedidos.length === 0) {
     return (
       <div className="table-wrap">
@@ -58,10 +58,18 @@ export default function PedidosTable({ pedidos, loading }) {
         </thead>
         <tbody>
           {pedidos.map(p => (
-            <tr key={p.id}>
-              <td className="id-cell">{p.id}</td>
+            <tr key={`${p.manual ? 'm' : 's'}-${p.id}`}>
+              <td className="id-cell">
+                {p.id}
+                {p.manual && <span className="tag-manual">manual</span>}
+              </td>
               <td>{p.zona}</td>
-              <td>{estadoBadge(p.estado)}</td>
+              <td>
+                {estadoBadge(p.estado)}
+                {p.manual && onQuitar && (
+                  <button className="btn-quitar" title="Quitar pedido manual" onClick={() => onQuitar(p.id)}>✕</button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
