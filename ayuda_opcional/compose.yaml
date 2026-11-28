@@ -4,6 +4,7 @@ services:
   app1:
     build:
       context: ..
+    restart: unless-stopped
     environment:
       INSTANCE_ID: app1
       DATA_PATH: /data/pedidos.json
@@ -23,6 +24,7 @@ services:
   app2:
     build:
       context: ..
+    restart: unless-stopped
     environment:
       INSTANCE_ID: app2
       DATA_PATH: /data/pedidos.json
@@ -41,6 +43,7 @@ services:
       start_period: 5s
   proxy:
     image: nginx:1.28-alpine
+    restart: unless-stopped
     ports:
       - "127.0.0.1:8080:80"
     volumes:
