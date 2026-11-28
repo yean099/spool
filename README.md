@@ -137,28 +137,18 @@ scp -r . usuario@IP_DEL_SERVIDOR:/opt/nodo-ruta
 
 ---
 
-### Paso 4 — Configurar variables de entorno
+### Paso 4 — Configuración
 
-Crea un archivo `.env` en la raíz del proyecto:
+El stack **no usa archivo `.env`**: el puerto y los identificadores de instancia están definidos en `compose.yaml` (`INSTANCE_ID: app1` / `app2`).
 
-```bash
-cd /opt/nodo-ruta
-cp .env.example .env   # si existe, si no créalo manualmente
-nano .env
+Por defecto el proxy publica **`127.0.0.1:8080`**, es decir, solo es accesible desde el propio servidor. Para exponerlo al exterior edita el mapeo de puertos del servicio `proxy` en `compose.yaml`:
+
+```yaml
+    ports:
+      - "80:80"      # en lugar de "127.0.0.1:8080:80"
 ```
 
-Variables disponibles:
-
-```env
-# Puerto público expuesto por NGINX
-PUBLIC_PORT=80
-
-# IDs de las instancias del backend
-INSTANCE_ID_1=app1
-INSTANCE_ID_2=app2
-```
-
-> ⚠️ **Nunca subas `.env` al repositorio.** Está en `.gitignore`.
+Si cambias el puerto, ajusta también las URLs de prueba de esta guía.
 
 ---
 
@@ -236,31 +226,19 @@ sudo certbot certonly --standalone -d tudominio.com
 # /etc/letsencrypt/live/tudominio.com/privkey.pem
 ```
 
-Luego actualiza `nginx.conf` para escuchar en 443 y monta los certificados en el `compose.yaml`.
+Luego actualiza `nginx.conf` para escuchar en 443, publica el puerto 443 en el servicio `proxy` y monta los certificados en el `compose.yaml` (aún no está implementado en este repositorio).
 
 ---
 
-### Paso 9 — Configurar reinicio automático
+### Paso 9 — Reinicio automático
 
-Para que los contenedores se relancen solos si el servidor reinicia, agrega `restart: unless-stopped` a cada servicio en `compose.yaml`:
-
-```yaml
-services:
-  app1:
-    restart: unless-stopped
-  app2:
-    restart: unless-stopped
-  proxy:
-    restart: unless-stopped
-  frontend:
-    restart: unless-stopped
-```
-
-Luego aplica el cambio:
+`compose.yaml` ya incluye `restart: unless-stopped` en `app1`, `app2`, `proxy` y `frontend`: los contenedores se relanzan solos si el proceso cae o el servidor reinicia. Verifícalo:
 
 ```bash
-docker compose up -d
+docker inspect -f '{{.Name}} {{.HostConfig.RestartPolicy.Name}}' $(docker compose ps -q)
 ```
+
+> `docker stop` y `docker kill` cuentan como parada manual y Docker no reinicia el contenedor. Un contenedor creado antes de añadir la política debe recrearse con `docker compose up -d`.
 
 ---
 
@@ -325,6 +303,9 @@ spool/
 ├── Dockerfile              # Imagen del backend
 ├── compose.yaml            # Stack completo (backend x2 + frontend + proxy)
 ├── nginx.conf              # Config NGINX: balanceo + proxy frontend
+├── docs/
+│   ├── MANUAL_TECNICO.md   # Manual para operadores
+│   └── MANUAL_USUARIO.md   # Manual para usuarios del panel
 ├── data/
 │   └── pedidos.json        # Copia de trabajo montada en los contenedores
 ├── frontend/
