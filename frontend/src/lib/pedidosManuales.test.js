@@ -47,3 +47,11 @@ test('guardar y cargar devuelven la misma lista', () => {
 test('guardar no lanza si setItem falla', () => {
   assert.doesNotThrow(() => guardar({ setItem() { throw new Error('bloqueado') } }, []))
 })
+
+import { filtroValido } from './pedidosManuales.js'
+test('filtroValido conserva el filtro si sigue existiendo', () => {
+  assert.equal(filtroValido('Sur', ['Todas', 'Sur'], 'Todas'), 'Sur')
+})
+test('filtroValido vuelve al valor por defecto si el filtro desapareció', () => {
+  assert.equal(filtroValido('Sur', ['Todas', 'Norte'], 'Todas'), 'Todas')
+})

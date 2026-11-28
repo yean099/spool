@@ -3,7 +3,7 @@ import HealthCard from './components/HealthCard'
 import PedidosTable from './components/PedidosTable'
 import Filters from './components/Filters'
 import PedidoForm from './components/PedidoForm'
-import { siguienteId, validarPedido, cargar, guardar } from './lib/pedidosManuales'
+import { siguienteId, validarPedido, cargar, guardar, filtroValido } from './lib/pedidosManuales'
 import './App.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
@@ -58,14 +58,16 @@ function App() {
   const todos = [...pedidos, ...manuales]
   const idsTodos = todos.map(p => p.id)
 
-  const pedidosFiltrados = todos.filter(p => {
-    const zonaOk = filtroZona === 'Todas' || p.zona === filtroZona
-    const estadoOk = filtroEstado === 'Todos' || p.estado === filtroEstado
-    return zonaOk && estadoOk
-  })
-
   const zonas = ['Todas', ...new Set(todos.map(p => p.zona))]
   const estados = ['Todos', ...new Set(todos.map(p => p.estado))]
+  const zonaActiva = filtroValido(filtroZona, zonas, 'Todas')
+  const estadoActivo = filtroValido(filtroEstado, estados, 'Todos')
+
+  const pedidosFiltrados = todos.filter(p => {
+    const zonaOk = zonaActiva === 'Todas' || p.zona === zonaActiva
+    const estadoOk = estadoActivo === 'Todos' || p.estado === estadoActivo
+    return zonaOk && estadoOk
+  })
 
   return (
     <div className="app">
@@ -105,8 +107,8 @@ function App() {
             <Filters
               zonas={zonas}
               estados={estados}
-              filtroZona={filtroZona}
-              filtroEstado={filtroEstado}
+              filtroZona={zonaActiva}
+              filtroEstado={estadoActivo}
               onZonaChange={setFiltroZona}
               onEstadoChange={setFiltroEstado}
             />
@@ -114,6 +116,7 @@ function App() {
           </div>
           {mostrarForm && (
             <PedidoForm
+              key={`${zonas.join('|')}#${estados.join('|')}`}
               zonas={zonas.filter(z => z !== 'Todas')}
               estados={estados.filter(e => e !== 'Todos')}
               idSugerido={siguienteId(idsTodos)}

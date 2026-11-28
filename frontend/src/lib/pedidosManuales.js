@@ -39,3 +39,7 @@ export function guardar(storage, lista) {
     /* localStorage no disponible: la app sigue sin persistir */
   }
 }
+
+export function filtroValido(valor, opciones, porDefecto) {
+  return opciones.includes(valor) ? valor : porDefecto
+}
